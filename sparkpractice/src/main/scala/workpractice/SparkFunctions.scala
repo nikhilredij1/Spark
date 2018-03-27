@@ -24,8 +24,34 @@ class SparkFunctions
     val spark = SparkSession.builder().master("local").getOrCreate()
     import spark.implicits._
     
+    def runTransformationActionFunctions()
+    {
+      val rdd1 = sparkCxt.parallelize(Array("b", "a", "c"))
+      val rddMap = rdd1.map(z => (z,1))
+      //println("Before Map " + rdd1.collect())
+      //println("After Map " + rddMap.collect())
+      
+      val rdd2 = spark.read.textFile("input/spark_test.txt").rdd
+      val rddFlatmap = rdd2.flatMap(lines => lines.split(" "))
+      //rddFlatmap.foreach(println)
+      
+      val rdd3 = sparkCxt.parallelize(Array(1,2,3))
+      val rddFilter = rdd3.filter(n => n%2 == 1)
+      //println("Before Filter " + rdd3.collect().mkString("| "))
+      //println("After Filter " + rddFilter.collect().mkString("| "))
+      
+      val rdd4 = sparkCxt.parallelize(Seq((1,"jan",2016),(3,"nov",2014),(16,"feb",2014)))
+      val rdd5 = sparkCxt.parallelize(Seq((5,"dec",2014),(17,"sep",2015)))
+      val rddUnion = rdd4.union(rdd5)
+      //rddUnion.foreach(println)
+      
+      val rdd6 = sparkCxt.parallelize(Array("John", "Fred", "Anna", "James"))
+      val rddGroupBy = rdd6.groupBy(w => w.charAt(0))
+      println("Before GroupBy " + rdd6.collect().mkString("| "))
+      println("After GroupBy " + rddGroupBy.collect().mkString("| "))
+    }
     
-    def func1()
+    def runDataFrameFunctions()
     {
       val dataList = Seq("Joe|196|242|3|22012016|-7.8|Texas|",
           "Samuel|186|302|3|02032016|1.67|California|",
