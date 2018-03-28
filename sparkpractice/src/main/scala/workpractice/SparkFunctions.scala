@@ -33,6 +33,7 @@ class SparkFunctions
       
       val rdd2 = spark.read.textFile("input/spark_test.txt").rdd
       val rddFlatmap = rdd2.flatMap(lines => lines.split(" "))
+      //println("RDD Flatmap")
       //rddFlatmap.foreach(println)
       
       val rdd3 = sparkCxt.parallelize(Array(1,2,3))
@@ -43,12 +44,32 @@ class SparkFunctions
       val rdd4 = sparkCxt.parallelize(Seq((1,"jan",2016),(3,"nov",2014),(16,"feb",2014)))
       val rdd5 = sparkCxt.parallelize(Seq((5,"dec",2014),(17,"sep",2015)))
       val rddUnion = rdd4.union(rdd5)
+      //println("RDD Union between " + rdd4.collect().mkString("| ") + " and " + rdd5.collect().mkString("| "))
       //rddUnion.foreach(println)
       
-      val rdd6 = sparkCxt.parallelize(Array("John", "Fred", "Anna", "James"))
-      val rddGroupBy = rdd6.groupBy(w => w.charAt(0))
-      println("Before GroupBy " + rdd6.collect().mkString("| "))
-      println("After GroupBy " + rddGroupBy.collect().mkString("| "))
+      val rdd6 = sparkCxt.parallelize(Seq((1,"jan",2016),(3,"nov",2014), (16,"feb",2014)))
+      val rdd7 = sparkCxt.parallelize(Seq((5,"dec",2014),(1,"jan",2016)))
+      val rddIntersection = rdd6.intersection(rdd7)
+      //println("RDD Intersection between " + rdd6.collect().mkString("| ") + " and " + rdd7.collect().mkString("| "))
+      //rddIntersection.foreach(println)
+      
+      val rdd8 = sparkCxt.parallelize(Array("John", "Fred", "Anna", "John", "Harry"))
+      val rddDistinct = rdd8.distinct()
+      //println("Distinct from (" + rdd8.collect().mkString("|") + ") are (" + rddDistinct.collect().mkString("|") + ")")
+      
+      val rdd9 = sparkCxt.parallelize(Array("John", "Fred", "Anna", "James"))
+      val rddGroupBy = rdd9.groupBy(w => w.charAt(0))
+      //println("Before GroupBy " + rdd9.collect().mkString("| "))
+      //println("After GroupBy " + rddGroupBy.collect().mkString("| "))
+      
+      val rdd10 = spark.sparkContext.parallelize(Array(('k',5),('s',3),('s',4),('p',7),('p',5),('t',8),('k',6)))
+			val rddGroupByKey = rdd10.groupByKey().collect()
+			//println("RDD (" + rdd10.collect().mkString(", ") + ") GreoupByKey")
+			//rddGroupByKey.foreach(println)
+			
+			val words = Array("one","two","two","four","five","six","six","eight","nine","ten")
+			val data = spark.sparkContext.parallelize(words).map(w => (w,1)).reduceByKey(_+_)
+			data.foreach(println)
     }
     
     def runDataFrameFunctions()
