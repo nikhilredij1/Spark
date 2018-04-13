@@ -1,0 +1,1 @@
+hello...user! this file is created to check the operations of spark and how can we apply functions on that RDD partitions?. All this will be done through spark programming which is done with the help of scala language support

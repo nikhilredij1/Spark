@@ -235,4 +235,27 @@ class SparkFunctions
       floorDF.show()
     }
     
+    def ReadParquet()
+    {
+      //System.setProperty("hadoop.home.dir","C:/Hadoop/bin/" )
+      val zips = sqlCxt.jsonFile("/Users/nikhilredij/workspace/Spark/sparkpractice/input/zips.json")
+      val conf = sparkCxt.hadoopConfiguration
+      val fs = org.apache.hadoop.fs.FileSystem.get(conf)
+      val exists = fs.exists(new org.apache.hadoop.fs.Path("/Users/nikhilredij/workspace/Spark/sparkpractice/input/zips.parquet"))
+      if(!exists)
+      {
+        zips.write.parquet("/Users/nikhilredij/workspace/Spark/sparkpractice/input/zips.parquet")
+      }
+      val zipsParq = sqlCxt.read.parquet("/Users/nikhilredij/workspace/Spark/sparkpractice/input/zips.parquet")
+      val start1 = System.currentTimeMillis()
+      val z1 = zips.groupBy(col("state"))
+          .agg(count("city").as("citysum")).where(col("state") === "TX" || col("state") === "CA" || col("state") === "MA" || col("state") === "KS").limit(10)
+      val start2 = System.currentTimeMillis()
+      val z2 = zipsParq.groupBy(col("state"))
+          .agg(count("city").as("citysum")).where(col("state") === "TX" || col("state") === "CA" || col("state") === "MA" || col("state") === "KS").limit(10)
+      val start3 = System.currentTimeMillis()
+      println("Time required to process JSON " + (start2 - start1) + " MS")
+      println("Time required to process Parquet " + (start3 - start2) + " MS")
+    }
+    
 }

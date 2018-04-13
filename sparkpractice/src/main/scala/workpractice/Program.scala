@@ -29,7 +29,8 @@ object CountingLocalApp
     //lcSparkTest.SolveProblem()
     
     var sparkFunc : SparkFunctions = new SparkFunctions
-    sparkFunc.runTransformationActionFunctions()
+    //sparkFunc.runTransformationActionFunctions()
+    sparkFunc.ReadParquet()
     //sparkFunc.runDataFrameFunctions()
     
 	}
